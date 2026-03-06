@@ -1,1 +1,554 @@
-/* You can add global styles to this file, and also import other style files */
+/* --- FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=Anybody:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Epilogue:wght@300;400;500;600&display=swap');
+
+/* --- RESET & VARIABLES --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f5f2ec;
+  --paper: #faf8f4;
+  --ink: #111418;
+  --ink2: #3a3f4a;
+  --ink3: #7a8090;
+  --border: #d8d2c8;
+  --border2: #c0b9ae;
+  --orange: #e8500a;
+  --orange-bg: rgba(232, 80, 10, 0.07);
+  --orange-border: rgba(232, 80, 10, 0.25);
+  --blue: #1a5fd4;
+  --blue-bg: rgba(26, 95, 212, 0.07);
+  --blue-border: rgba(26, 95, 212, 0.25);
+  --green: #0a8a4e;
+  --green-bg: rgba(10, 138, 78, 0.08);
+  --green-border: rgba(10, 138, 78, 0.25);
+  --red: #c8292b;
+  --red-bg: rgba(200, 41, 43, 0.07);
+  --red-border: rgba(200, 41, 43, 0.2);
+  --yellow: #d48a00;
+  --yellow-bg: rgba(212, 138, 0, 0.09);
+  --yellow-border: rgba(212, 138, 0, 0.22);
+  --purple: #7c3aed;
+  --purple-bg: rgba(124, 58, 237, 0.07);
+  --purple-border: rgba(124, 58, 237, 0.22);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Epilogue', sans-serif;
+  min-height: 100vh;
+}
+
+.root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+  background: var(--paper);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 16px;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Anybody', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+.logo-badge {
+  background: var(--orange);
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.topbar-pct {
+  font-family: 'Anybody', sans-serif;
+  font-weight: 900;
+  font-size: 1.6rem;
+  letter-spacing: -0.04em;
+  transition: color 0.4s;
+}
+
+.topbar-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--ink3);
+  line-height: 1.5;
+  text-align: right;
+}
+
+/* --- SCANNED BADGE --- */
+.scanned-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: var(--purple-bg);
+  border: 1px solid var(--purple-border);
+  color: var(--purple);
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.scanned-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--purple);
+  animation: blink 1.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* --- WORKSPACE --- */
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1px 290px 1px 1fr;
+}
+
+.v-div {
+  background: var(--border);
+}
+
+.panel {
+  padding: 22px 18px;
+  overflow-y: auto;
+  max-height: calc(100vh - 56px);
+}
+
+.panel-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 4px;
+}
+
+.panel-title {
+  font-family: 'Anybody', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.count-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--ink3);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 1px 7px;
+  border-radius: 20px;
+}
+
+/* --- UPLOAD ZONE --- */
+.upload-zone {
+  border: 2px dashed var(--border2);
+  border-radius: 10px;
+  padding: 18px 14px;
+  background: var(--bg);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.upload-zone:hover, .upload-zone.drag {
+  border-color: var(--purple);
+  background: var(--purple-bg);
+}
+
+.upload-zone.scanning {
+  border-color: var(--purple);
+  border-style: solid;
+  background: var(--purple-bg);
+  cursor: default;
+}
+
+.upload-zone.done {
+  border-color: var(--green);
+  border-style: solid;
+  background: var(--green-bg);
+  cursor: pointer;
+}
+
+.upload-icon {
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.upload-title {
+  font-family: 'Anybody', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 3px;
+}
+
+.upload-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--ink3);
+}
+
+.upload-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* --- SCANNING ANIMATION --- */
+.scan-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.scan-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), #a78bfa, var(--purple));
+  background-size: 200% 100%;
+  animation: scanSlide 1.2s linear infinite;
+  border-radius: 2px;
+  width: 100%;
+}
+
+@keyframes scanSlide {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* --- CHIPS --- */
+.chips-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 48px;
+  padding: 9px;
+  background: var(--bg);
+  border: 1.5px dashed var(--border2);
+  border-radius: 9px;
+  margin-bottom: 9px;
+  align-content: flex-start;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 5px;
+  transition: all 0.12s;
+}
+
+.chip.blue { background: var(--blue-bg); border: 1px solid var(--blue-border); color: var(--blue); }
+.chip.orange { background: var(--orange-bg); border: 1px solid var(--orange-border); color: var(--orange); }
+.chip.scanned { background: var(--purple-bg); border: 1px solid var(--purple-border); color: var(--purple); }
+
+.chip .rm {
+  cursor: pointer;
+  opacity: 0.4;
+  line-height: 1;
+  font-size: 0.8rem;
+  transition: opacity 0.1s;
+}
+
+.chip .rm:hover { opacity: 1; }
+
+.chip-ai { font-size: 0.55rem; opacity: 0.7; margin-right: 1px; }
+
+/* --- INPUTS & BUTTONS --- */
+.input-row { display: flex; gap: 5px; margin-bottom: 9px; }
+
+.sk-in {
+  flex: 1;
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--ink);
+  padding: 7px 10px;
+  outline: none;
+}
+
+.sk-in:focus { border-color: var(--blue); }
+.sk-in.r:focus { border-color: var(--orange); }
+
+.add-btn {
+  font-family: 'Anybody', sans-serif;
+  font-weight: 700;
+  font-size: 0.74rem;
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-btn.b { background: var(--blue); color: #fff; }
+.add-btn.o { background: var(--orange); color: #fff; }
+
+/* --- CENTER PANEL ANALYSIS --- */
+.center {
+  background: var(--paper);
+  padding: 22px 14px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 56px);
+}
+
+.score-sec {
+  text-align: center;
+  padding: 18px 6px 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.big-score {
+  font-family: 'Anybody', sans-serif;
+  font-weight: 900;
+  font-size: 4rem;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.verdict-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+.vp-s { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.vp-p { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+.vp-l { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+/* --- PRESETS --- */
+.preset-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+
+.preset-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.63rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+}
+
+.preset-btn.active {
+  background: var(--orange-bg);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* --- RESPONSIVE --- */
+@media(max-width: 860px) {
+  .workspace { grid-template-columns: 1fr; }
+  .v-div { display: none; }
+  .panel, .center { max-height: none; }
+}
+
+.manual-box {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .q-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+  
+  .q-btn {
+    background: var(--bg);
+    border: 1px dashed var(--border2);
+    color: var(--ink3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .q-btn:hover {
+    background: white;
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* --- VENN DIAGRAM --- */
+.venn-box { margin: 20px 0; text-align: center; }
+.venn-diagram {
+  position: relative;
+  width: 160px;
+  height: 100px;
+  margin: 0 auto;
+}
+.circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: absolute;
+  border: 1.5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.circle.left { border-color: var(--blue); background: var(--blue-bg); left: 0; }
+.circle.right { border-color: var(--orange); background: var(--orange-bg); right: 0; }
+.overlap {
+  position: absolute;
+  left: 50px;
+  top: 15px;
+  width: 60px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: var(--green);
+}
+.venn-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.55rem;
+  color: var(--ink3);
+  margin-top: 5px;
+}
+
+/* --- STATS BARS --- */
+.stats-bars { margin-top: 20px; }
+.stat-row { margin-bottom: 12px; }
+.stat-meta { display: flex; justify-content: space-between; font-size: 0.6rem; margin-bottom: 4px; font-family: 'IBM Plex Mono'; }
+.bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; transition: width 0.5s; }
+.fill.green { background: var(--green); }
+.fill.red { background: var(--red); }
+.fill.blue { background: var(--blue); }
+
+/* --- RESULT CHIPS --- */
+.res-chip {
+  font-size: 0.65rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono';
+}
+.res-chip.match { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.res-chip.extra { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+
+.focus-box {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+.focus-title { font-size: 0.75rem; font-weight: 700; color: #f57f17; }
+
+.login-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column; /* Stack logo and card vertically */
+    align-items: center;    /* Horizontal centering */
+    justify-content: center; /* Vertical centering */
+    background-color: #f9f7f2; /* Matches your screenshot background */
+    margin: 0;
+  }
+  
+  .login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;      /* Centers the text and button inside */
+    width: 100%;
+    max-width: 400px;        /* Prevents it from getting too wide */
+  }
+  
+  .login-card h2 {
+    font-family: 'Anybody';
+    margin: 20px 0 10px;
+  }
+  
+  .login-card input {
+    width: 100%;
+    padding: 12px;
+    margin: 20px 0 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    font-family: 'IBM Plex Mono';
+  }
+  
+  .err-text {
+    color: var(--red);
+    font-size: 0.7rem;
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono';
+  }
