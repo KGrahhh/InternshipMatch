@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// Update: This must match your filename 'login' and the class name 'Login'
-// Add './login/' to the path to tell Angular to look inside the folder
 import { Login } from './login/login';
 
 @Component({
@@ -13,19 +11,29 @@ import { Login } from './login/login';
   styleUrls: ['./app.css']
 })
 export class AppComponent {
-  // Fix: Explicitly typing this as 'Login' tells the HTML what methods exist
   public auth: Login = inject(Login);
   
+  // UI State
   passInput = "";
   loginError = false;
-
-  // Data Lists
-  sSkills: string[] = ["Node.js", "Python", "SQL", "Docker", "JavaScript"];
-  rSkills: string[] = ["React", "Node.js", "MongoDB", "REST APIs", "Git", "JavaScript", "HTML/CSS"];
-  
+  isSignupMode = false;
   sInput = "";
   rInput = "";
   selectedPreset = 'Full-Stack Dev';
+
+  // SOC Standards
+  thresholdValue = 75; 
+
+  // Student Skills (Stored as objects for weighting)
+  sSkillsObj: { name: string, level: number }[] = [
+    { name: "Node.js", level: 2 },
+    { name: "Python", level: 1 },
+    { name: "SQL", level: 3 },
+    { name: "JavaScript", level: 2 }
+  ];
+
+  // Internship Requirements
+  rSkills: string[] = ["React", "Node.js", "MongoDB", "REST APIs", "Git", "JavaScript", "HTML/CSS"];
 
   presets = [
     { name: 'Full-Stack Dev', skills: ["React", "Node.js", "MongoDB", "REST APIs", "Git", "JavaScript", "HTML/CSS"] },
@@ -35,55 +43,99 @@ export class AppComponent {
 
   sQuickAdd = ["React", "Angular", "Java", "MongoDB", "Git", "HTML/CSS", "TypeScript", "Figma", "Flutter", "Linux"];
 
-  tryLogin() {
-    // Now TypeScript knows that 'this.auth' (the Login class) has a .login() method
-    if (this.auth.login(this.passInput)) {
-      this.loginError = false;
-    } else {
-      this.loginError = true;
-    }
-    this.passInput = "";
+  /* --- Comparison Logic (Fixes the TS2339 Errors) --- */
+  
+  // Returns just the names of the student's skills
+  get sSkills(): string[] {
+    return this.sSkillsObj.map(s => s.name);
   }
 
-  /* --- Comparison Logic --- */
-  get matched() {
+  // Skills the student has that match requirements
+  get matched(): string[] {
     const sLow = this.sSkills.map(s => s.toLowerCase());
     return this.rSkills.filter(r => sLow.includes(r.toLowerCase()));
   }
 
-  get missing() {
+  // Skills the student is MISSING (This fixes your specific error)
+  get missing(): string[] {
     const sLow = this.sSkills.map(s => s.toLowerCase());
     return this.rSkills.filter(r => !sLow.includes(r.toLowerCase()));
   }
 
-  get extra() {
+  // Skills the student has that ARE NOT required
+  get extra(): string[] {
     const rLow = this.rSkills.map(r => r.toLowerCase());
     return this.sSkills.filter(s => !rLow.includes(s.toLowerCase()));
   }
 
-  get score() {
-    return this.rSkills.length ? Math.round((this.matched.length / this.rSkills.length) * 100) : 0;
+  /**
+   * Weighted Matching Algorithm
+   */
+  get score(): number {
+    if (!this.rSkills.length) return 0;
+    let earnedPoints = 0;
+    const maxPossiblePoints = this.rSkills.length * 3;
+
+    this.sSkillsObj.forEach(skill => {
+      if (this.rSkills.some(r => r.toLowerCase() === skill.name.toLowerCase())) {
+        earnedPoints += Number(skill.level);
+      }
+    });
+
+    return Math.min(Math.round((earnedPoints / maxPossiblePoints) * 100), 100);
   }
 
+  get isReady(): boolean {
+    return this.score >= this.thresholdValue;
+  }
+
+  calculateWeightedScore() {
+    // Triggers change detection
+  }
+
+  /* --- Data Management --- */
   addSkill(type: 's' | 'r', val?: string) {
-    const skill = (val || (type === 's' ? this.sInput : this.rInput)).trim();
-    if (!skill) return;
+    const skillName = (val || (type === 's' ? this.sInput : this.rInput)).trim();
+    if (!skillName) return;
+
     if (type === 's') {
-      if (!this.sSkills.includes(skill)) this.sSkills.push(skill);
+      if (!this.sSkills.includes(skillName)) {
+        this.sSkillsObj.push({ name: skillName, level: 1 });
+      }
       this.sInput = "";
     } else {
-      if (!this.rSkills.includes(skill)) this.rSkills.push(skill);
+      if (!this.rSkills.includes(skillName)) this.rSkills.push(skillName);
       this.rInput = "";
     }
   }
 
-  removeSkill(type: 's' | 'r', skill: string) {
-    if (type === 's') this.sSkills = this.sSkills.filter(s => s !== skill);
-    else this.rSkills = this.rSkills.filter(s => s !== skill);
+  removeSkill(type: 's' | 'r', skillName: string) {
+    if (type === 's') {
+      this.sSkillsObj = this.sSkillsObj.filter(s => s.name !== skillName);
+    } else {
+      this.rSkills = this.rSkills.filter(s => s !== skillName);
+    }
   }
 
   setPreset(p: any) {
     this.selectedPreset = p.name;
     this.rSkills = [...p.skills];
+  }
+
+  tryAuth() {
+    if (this.isSignupMode) {
+      this.auth.signup(this.passInput);
+    } else {
+      if (!this.auth.login(this.passInput)) {
+        this.loginError = true;
+      } else {
+        this.loginError = false;
+      }
+    }
+    this.passInput = "";
+  }
+
+  exportPDF() {
+    alert("Generating Internship Readiness Report for HAU School of Computing...");
   }
 }
